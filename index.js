@@ -70,7 +70,7 @@ function runList() {
             }
         })
 }
-runList();
+
 
 function viewAllDepartments() {
     connection.query(
@@ -107,4 +107,6 @@ function viewAllEmployees() {
         }
     )
 }
+
+runList();
 
