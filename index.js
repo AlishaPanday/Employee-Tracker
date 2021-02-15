@@ -98,7 +98,7 @@ function viewAllRoles() {
 
 function viewAllEmployees() {
     connection.query(
-        'SELECT * FROM role', (err, res) => {
+        'SELECT * FROM employee', (err, res) => {
             if(err){
                 throw err;
             }
