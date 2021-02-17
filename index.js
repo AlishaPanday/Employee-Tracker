@@ -281,16 +281,20 @@ function updateEmployeeRole() {
           },
       ]).then(function(response) {;
         let roleId = selectRole().indexOf(response.role) + 1
-        connection.query("UPDATE employee SET WHERE ?", 
-        {
-          last_name: response.lastName
-           
-        }, 
-        {
-          role_id: roleId
-           
-        }, 
-        function(err){
+        console.log(roleId);
+        connection.query(
+            "UPDATE employee SET ? WHERE ?", 
+            [
+                {
+                   
+                    role_id: roleId
+                     
+                  }, 
+                  {
+                     last_name: response.lastName
+                     
+                  },
+            ],function(err){
             if (err) throw err
             console.table(response)
             runList();
