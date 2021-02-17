@@ -63,10 +63,11 @@ function runList() {
                 break;
 
                 case"Add Employees":
-                    addEmployees()
+                    addEmployee();
                 break;
 
                 case"Update Employee Roles":
+                    updateEmployeeRole();
                 break;
 
                 case"Exit":
@@ -185,40 +186,119 @@ function addRoles() {
     });
 }
 
-function addEmployees() {
-    console.log('aa');
-    inquirer.prompt([
 
-        {
-            type:'input',
-            name:'firstname',
-            message:'Please enter first name:'
-        },
+var roleArr = [];
+function selectRole() {
+  connection.query("SELECT * FROM role", function(err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      roleArr.push(res[i].title);
+    }
 
-        {
-            type:'input',
-            name:'lastname',
-            message:'Please enter last name:'
-        },
-
-        {
-            type:'input',
-            name:'roleId',
-            message:'Please enter role id:'
-        },
-
-        {
-            type:'input',
-            name:'managerId',
-            message:'Please enter manager id:'
-        }
-    ]).then(answer => {
-        console.log(answer);
-        connection.query('INSERT INTO employee SET?',{first_name:answer.firstname,last_name:answer.lastname,role_id: answer.roleId,manager_id: answer.managerId }, (err,res) =>{
-            if (err) throw err;
-            console.log('Added new employee')
-        });
-    });
+  })
+  return roleArr;
 }
-runList();
 
+var managersArr = [];
+function selectManager() {
+  connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function(err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      managersArr.push(res[i].first_name);
+    }
+
+  })
+  return managersArr;
+}
+
+function addEmployee() { 
+    inquirer.prompt([
+        {
+          name: "firstname",
+          type: "input",
+          message: "Enter their first name "
+        },
+        {
+          name: "lastname",
+          type: "input",
+          message: "Enter their last name "
+        },
+        {
+          name: "role",
+          type: "list",
+          message: "What is their role? ",
+          choices: selectRole()
+        },
+        {
+            name: "choice",
+            type: "rawlist",
+            message: "Whats their managers name?",
+            choices: selectManager()
+        }
+    ]).then(function (res) {
+      let roleId = selectRole().indexOf(res.role) + 1
+      let managerId = selectManager().indexOf(res.choice) + 1
+      connection.query("INSERT INTO Employee SET ?", 
+      {
+          first_name: res.firstname,
+          last_name: res.lastname,
+          manager_id: managerId,
+          role_id: roleId
+          
+      }, function(err){
+          if (err) throw err
+          console.table(res)
+          runList();
+      })
+
+  })
+}
+
+
+
+function updateEmployeeRole() {
+    connection.query("SELECT employee.last_name, role.title  FROM employee JOIN role ON employee.role_id = role.id;", function(err, res) {
+    // console.log(res)
+     if (err) throw err
+    inquirer.prompt([
+          {
+            name: "lastName",
+            type: "rawlist",
+            choices: function() {
+              var lastName = [];
+              for (var i = 0; i < res.length; i++) {
+                lastName.push(res[i].last_name);
+              }
+              return lastName;
+            },
+            message: "What is the employee's last name? ",
+          },
+          {
+            name: "role",
+            type: "rawlist",
+            message: "What is the Employees new title? ",
+            choices: selectRole()
+          },
+      ]).then(function(response) {;
+        let roleId = selectRole().indexOf(response.role) + 1
+        connection.query("UPDATE employee SET WHERE ?", 
+        {
+          last_name: response.lastName
+           
+        }, 
+        {
+          role_id: roleId
+           
+        }, 
+        function(err){
+            if (err) throw err
+            console.table(response)
+            runList();
+        })
+  
+    })
+  })
+
+  }
+  
+  runList();
