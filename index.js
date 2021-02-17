@@ -1,6 +1,6 @@
 const inquirer = require ('inquirer');
-const mysql = require('mysql');
-require('console.table');
+const mysql = require('mysql2');
+
 //Select an option from the list using inquirer
 //1) VIEW all Depatments 
 //2) VIEW all Roles
@@ -70,7 +70,7 @@ function runList() {
                 break;
 
                 case"Exit":
-                    // connection.end();
+                    connection.end();
                     console.log('Have a good day');
                 break;
             }
@@ -134,31 +134,54 @@ function addDepartment() {
 
 function addRoles() {
     console.log('aa');
-    inquirer.prompt([
 
-        {
-            type:'input',
-            name:'roles',
-            message:'Please add a role:'
-        },
+    // query all the depts
+    connection.promise().query("SELECT * FROM Department")
+        .then((res) => {
+            // make the choice dept arr
+            return res[0].map(dept => {
+                return {
+                    name: dept.name,
+                    value: dept.id
+                }
+            })
+        })
+        .then((departments) => {
+            
+            return inquirer.prompt([
 
-        {
-            type:'input',
-            name:'salary',
-            message:'Please enter a salary:'
-        },
+                {
+                    type:'input',
+                    name:'roles',
+                    message:'Please add a role:'
+                },
+        
+                {
+                    type:'input',
+                    name:'salary',
+                    message:'Please enter a salary:'
+                },
+        
+                {
+                    type:'list',
+                    name:'depts',
+                    choices: departments,
+                    message:'Please select your department.'
+                }
+            ])
+        })
 
-        {
-            type:'input',
-            name:'deptId',
-            message:'Please enter department id:'
-        }
-    ]).then(answer => {
+    .then(answer => {
         console.log(answer);
-        connection.query('INSERT INTO role SET?',{title:answer.roles, salary:answer.salary,department_id: answer.deptId}, (err,res) =>{
-            if (err) throw err;
-            console.log('Added new role')
-        });
+        return connection.promise().query('INSERT INTO role SET ?',{title:answer.roles, salary:answer.salary,department_id: answer.depts});
+    })
+    .then(res => {
+        console.log('Added new role')
+        runList();
+
+    })
+    .catch(err => {
+        throw err
     });
 }
 
