@@ -1,7 +1,10 @@
 USE employee_tracker; 
 
 INSERT INTO Department (name)
-VALUES ('Sales','Engineering','Finance','Legal');
+VALUES ('Sales'),
+       ('Engineering'),
+       ('Finance'),
+       ('Legal');
 
 INSERT INTO Role 
     (title, salary,department_id)
