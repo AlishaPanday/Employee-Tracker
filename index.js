@@ -25,10 +25,10 @@ function runList() {
                 'Add department',
                 'Add Roles',
                 'Add Employees',
-                'Update Employee Roles',
                 'Delete Departments',
                 'Delete Employee',
                 'Delete Roles',
+                'Update Employee Roles',
                 'Update employee manager',
                 'View Employee By Manager',
                 'Exit'
@@ -197,7 +197,7 @@ function addRoles() {
 }
 
 
-var roleArr = [];
+let roleArr = [];
 function selectRole() {
     connection.query("SELECT * FROM role", function (err, res) {
         if (err) throw err
@@ -209,7 +209,7 @@ function selectRole() {
     return roleArr;
 }
 
-var managersArr = [];
+let managersArr = [];
 function selectManager() {
     connection.query("SELECT first_name, last_name FROM employee", function (err, res) {
         if (err) throw err
