@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
-
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -10,7 +9,6 @@ const connection = mysql.createConnection({
 });
 
 connection.connect();
-
 
 function runList() {
     inquirer.prompt(
@@ -196,7 +194,6 @@ function addRoles() {
         });
 }
 
-
 let roleArr = [];
 function selectRole() {
     connection.query("SELECT * FROM role", function (err, res) {
@@ -263,7 +260,6 @@ function addEmployee() {
 
     })
 }
-
 
 function updateEmployeeRole() {
     connection.query("SELECT employee.last_name, role.title  FROM employee JOIN role ON employee.role_id = role.id;", function (err, res) {
