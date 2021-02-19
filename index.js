@@ -137,6 +137,7 @@ function addDepartment() {
         connection.query('INSERT INTO department SET?', { name: answer.department }, (err, res) => {
             if (err) throw err;
             console.log('Added new department')
+            runList();
         });
     });
 }
@@ -194,31 +195,38 @@ function addRoles() {
         });
 }
 
-let roleArr = [];
+
 function selectRole() {
-    connection.query("SELECT * FROM role", function (err, res) {
-        if (err) throw err
-        for (var i = 0; i < res.length; i++) {
-            roleArr.push(res[i].title);
-        }
-
-    })
-    return roleArr;
+    return connection.promise().query("SELECT * FROM role")
+        .then(res => {
+            return res[0].map(role => {
+                return {
+                    name: role.title,
+                    value: role.id
+                }
+            })
+        })
 }
 
-let managersArr = [];
+
 function selectManager() {
-    connection.query("SELECT first_name, last_name FROM employee", function (err, res) {
-        if (err) throw err
-        for (var i = 0; i < res.length; i++) {
-            managersArr.push(res[i].first_name);
-        }
-
-    })
-    return managersArr;
+    return connection.promise().query("SELECT * FROM employee where manager_id is not null")
+        .then(res => {
+            return res[0].map(manager => {
+                return {
+                    name: `${manager.first_name} ${manager.last_name}`,
+                    value: manager.id,
+                }
+            })
+        })
+    
 }
 
-function addEmployee() {
+async function addEmployee() {
+
+    const managers = await selectManager();
+
+
     inquirer.prompt([
         {
             name: "firstname",
@@ -234,17 +242,19 @@ function addEmployee() {
             name: "role",
             type: "list",
             message: "What is their role? ",
-            choices: selectRole()
+            choices: await selectRole()
         },
         {
-            name: "choice",
-            type: "rawlist",
+            name: "manager",
+            type: "list",
             message: "Whats their managers name?",
-            choices: selectManager()
+            choices: managers
         }
     ]).then(function (res) {
-        let roleId = selectRole().indexOf(res.role) + 1
-        let managerId = selectManager().indexOf(res.choice) + 1
+        let roleId = res.role
+        let managerId = res.manager
+
+        console.log({managerId});
         connection.query("INSERT INTO Employee SET ?",
             {
                 first_name: res.firstname,
@@ -437,39 +447,31 @@ function updateManager() {
                 }
             })
         })
-        .then((employeeList) => {
+        .then(async (employeeList) => {
             return inquirer.prompt([
                 {
-                    type: 'rawlist',
+                    type: 'list',
                     name: 'employeeListId',
                     choices: employeeList,
                     message: 'Please select the employee you want to assign manager to:.'
                 },
                 {
-                    type: 'rawlist',
+                    type: 'list',
                     name: 'managerId',
-                    choices: employeeList,
+                    choices: await selectManager(),
                     message: 'Please select the employee you want to make manager.'
                 }
             ])
         })
         .then(answer => {
             console.log(answer);
-            return connection.promise().query("UPDATE employee SET ? WHERE ?",
-                [
-                    {
-
-                        first_name: answer.employeeListId
-
-
-                    },
-                    {
-
-                        manager_id: answer.managerId
-
-                    }
-                ]
-
+            return connection.promise().query("UPDATE employee SET  manager_id = ? WHERE id = ?",
+                
+                    [
+                        answer.managerId,
+                        answer.employeeListId,
+                    ],
+            
 
             );
 
