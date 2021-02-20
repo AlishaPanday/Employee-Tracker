@@ -272,54 +272,56 @@ async function addEmployee() {
 }
 
 function updateEmployeeRole() {
-    connection.query("SELECT employee.last_name, role.title  FROM employee JOIN role ON employee.role_id = role.id;", function (err, res) {
-        // console.log(res)
-        if (err) throw err
-        inquirer.prompt([
-            {
-                name: "lastName",
-                type: "rawlist",
-                choices: function () {
-                    var lastName = [];
-                    for (var i = 0; i < res.length; i++) {
-                        lastName.push(res[i].last_name);
-                    }
-                    return lastName;
+    connection.promise().query('SELECT *  FROM employee')
+        .then((res) => {
+            return res[0].map(employee => {
+                return {
+                    name: employee.first_name,
+                    value: employee.id
+                }
+            })
+        })
+        .then(async (employeeList) => {
+            return inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employeeListId',
+                    choices: employeeList,
+                    message: 'Please select the employee you want to update a role:.'
                 },
-                message: "What is the employee's last name? ",
-            },
-            {
-                name: "role",
-                type: "rawlist",
-                message: "What is the Employees new title? ",
-                choices: selectRole()
-            },
-        ]).then(function (response) {
-            ;
-            let roleId = selectRole().indexOf(response.role) + 1
-            console.log(roleId);
-            connection.query(
-                "UPDATE employee SET ? WHERE ?",
-                [
-                    {
+                {
+                    type: 'list',
+                    name: 'roleId',
+                    choices: await selectRole(),
+                    message: 'Please select the role.'
+                }
+            ])
+        })
+        .then(answer => {
+            console.log(answer);
+            return connection.promise().query("UPDATE employee SET  role_id = ? WHERE id = ?",
+                
+                    [
+                        answer.roleId,
+                        answer.employeeListId,
+                    ],
+            
 
-                        role_id: roleId
-
-                    },
-                    {
-                        last_name: response.lastName
-
-                    },
-                ], function (err) {
-                    if (err) throw err
-                    console.table(response)
-                    runList();
-                })
+            );
 
         })
-    })
+        .then(res => {
+            // console.log(res);
+            console.log('Updated Manager Successfully')
+            runList();
+        })
+
+        .catch(err => {
+            throw err
+        });
 
 }
+
 
 function deleteDepartment() {
     connection.promise().query('SELECT * FROM Department')
