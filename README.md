@@ -7,7 +7,7 @@ https://github.com/AlishaPanday/Employee-Tracker <br  />
 
 
 ##  Video Link
-https://drive.google.com/file/d/1sLNnz_FHALUVuqExUpHTH5bm6WUV1N-8/view <br  />
+https://drive.google.com/file/d/1mkQtpxQCvzgwNdLjc86c5GFLfT9OyupU/view <br  />
 
 
 ## User Story 
@@ -27,13 +27,8 @@ So that I can organize and plan my business
 
 ```
 ## Mock-up
-![view department](https://user-images.githubusercontent.com/72904217/108460451-ad788000-72b3-11eb-8a40-02058dc9b08e.PNG)
-![view roles](https://user-images.githubusercontent.com/72904217/108460454-afdada00-72b3-11eb-83a3-a1d4dd52baad.PNG)
-![view employee](https://user-images.githubusercontent.com/72904217/108460459-b1a49d80-72b3-11eb-8252-67edcd1ecc9c.PNG)
-![add department](https://user-images.githubusercontent.com/72904217/108460464-b49f8e00-72b3-11eb-97f1-a9002c859c52.PNG)
-![add role](https://user-images.githubusercontent.com/72904217/108460468-b5d0bb00-72b3-11eb-8274-961675185b6f.PNG)
-![add employee](https://user-images.githubusercontent.com/72904217/108460473-b8331500-72b3-11eb-85fb-abc7520fcfaa.PNG)
-![delete](https://user-images.githubusercontent.com/72904217/108460494-c123e680-72b3-11eb-8237-4d1af96eaac4.PNG)
-![update   view](https://user-images.githubusercontent.com/72904217/108460506-c5500400-72b3-11eb-8fc1-27706ce5d5a0.PNG)
+![1](https://user-images.githubusercontent.com/72904217/108624451-0137c480-7480-11eb-8cd1-04acf972d87f.PNG)
+![2](https://user-images.githubusercontent.com/72904217/108624452-0268f180-7480-11eb-93ea-b1953ac571bc.PNG)
+![4](https://user-images.githubusercontent.com/72904217/108624455-05fc7880-7480-11eb-8c27-f51f91f20132.PNG)
 
 
