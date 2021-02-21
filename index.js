@@ -101,7 +101,7 @@ function viewAllDepartments() {
 
 function viewAllRoles() {
     connection.query(
-        'SELECT * FROM role', (err, res) => {
+        'SELECT employee.id, first_name, last_name, title AS Job_title, salary, manager_id AS manager FROM employee, role WHERE role.id = employee.role_id ', (err, res) => {
             if (err) {
                 throw err;
             }
@@ -112,14 +112,17 @@ function viewAllRoles() {
 }
 
 function viewAllEmployees() {
+    const sql = 'Select emp.id as EmployeeID, concat(emp.first_name,"  ",emp.last_name ) as EmployeeName , ro.title as Job_tittle, ro.salary as Salary,dept.name as Department_Name,concat(emp2.first_name,"  ",emp2.last_name) as ManagerName from employee_tracker.employee as emp inner join employee_tracker.employee as emp2 on emp2.id=emp.manager_id inner join employee_tracker.Role as ro on emp.role_id=ro.id inner join employee_tracker.department as dept on dept.id = ro.department_id';
     connection.query(
-        'SELECT * FROM employee', (err, res) => {
+        sql, 
+        (err, res) => {
             if (err) {
                 throw err;
             }
             console.table(res)
             runList();
         }
+
     )
 }
 
@@ -219,7 +222,7 @@ function selectManager() {
                 }
             })
         })
-    
+
 }
 
 async function addEmployee() {
@@ -300,12 +303,12 @@ function updateEmployeeRole() {
         .then(answer => {
             console.log(answer);
             return connection.promise().query("UPDATE employee SET  role_id = ? WHERE id = ?",
-                
+
                     [
                         answer.roleId,
                         answer.employeeListId,
                     ],
-            
+
 
             );
 
@@ -468,12 +471,12 @@ function updateManager() {
         .then(answer => {
             console.log(answer);
             return connection.promise().query("UPDATE employee SET  manager_id = ? WHERE id = ?",
-                
+
                     [
                         answer.managerId,
                         answer.employeeListId,
                     ],
-            
+
 
             );
 
@@ -492,7 +495,7 @@ function updateManager() {
 
 function viewEmployeeByManager() {
     connection.query(
-        'SELECT first_name, last_name, role_id FROM employee  WHERE manager_id IS NOT NULL', (err, res) => {
+        'SELECT first_name, last_name, role_id, manager_id FROM employee  WHERE manager_id IS NOT NULL', (err, res) => {
             if (err) {
                 throw err;
             }
@@ -503,3 +506,72 @@ function viewEmployeeByManager() {
 }
 
 runList();
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// const inquirer = require('inquirer');
+// const mysql = require('mysql');
+// // SELECT AN OPTION:
+// // 1) DISPLAY SONGS BY ARTIST NAME
+// //      - ARTIST NAME (FREE TEXT)
+// // 2) SHOW ARTIST IN LIST MORE THAN ONCE
+// // 3) SELECT DATA BETWEEN YEARS
+// //      - FROM YEAR, TO YEAR
+// // 4) DISPLAY SONGS BY SONG TITLE
+// //      - SONG TITLE (FREE TEXT)
+// const CHOICES = [
+//     { name: 'View all Employee', value: 1 },
+//     { name: 'Update Employee Role', value: 2 },
+//     { name: 'Update Employee by Manager', value: 3 },
+//     { name: 'View Employee by Manager', value: 4 },
+//     { name: 'View Salary of all employees in that department', value: 5 }
+// ];
+// const connection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'root',
+//     database: 'Employee_Tracker',
+// });
+// connection.connect();
+// inquirer
+//     .prompt([
+//         {
+//             type: 'list',
+//             name: 'option',
+//             message: 'Select an option:',
+//             choices: CHOICES,
+//         },
+//     ])
+//     .then(({ option }) => {
+//         switch (option) {
+//             case 1:
+                
+//                 break;
+//             case 2:
+                
+//                 break;
+//             case 3:
+                
+//                 break;
+//             case 4:
+                
+//                 break;
+//             case 5:
+                
+//                 break;
+//             default:
+//                 throw 'Something went wrong.';
+//         }
+//     });
+
+//     const viewAllEmployee = () => inquirer
+//     .prompt ([
+//         {
+//             type:
+//             name:
+//             message:
+//             choices:
+//         }
+//     ])
+
+    
